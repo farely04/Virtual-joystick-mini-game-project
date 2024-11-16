@@ -1,0 +1,42 @@
+public class Enemy : MonoBehaviour
+{
+    [Tooltip("ลากสิ่งที่ตอ้งการให้AI เดินไปหามาไว้ที่นี่")]
+    public Transform goalObject;
+    UnityEngine.AI.NavMeshAgent navAgent;
+    public float floatHeight = 5;
+    void Start()
+    {
+        //บังคับให้ AI ประมวลผลเดิน
+        navAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+        navAgent.updateUpAxis = false;
+    }
+    void Update()
+    {
+        Vector3 targerPosition = gameObject.position; //ตรง Podition ต้องแก้ 
+
+        navAgent.destination = goalObject.position;
+
+        navAgent.destination = targerPosition;
+    }
+    void OnTriggerEnter(Collider collision)
+    {
+        if (collision.gameObject.tag == "bullet")
+        {
+            //หยุดการเดิน
+            UnityEngine.AI.NavMeshAgent navAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+            navAgent.isStopped = true;
+            StartCoroutine(clearObject());
+        }
+    }
+
+
+    IEnumerator clearObject()
+    {
+        //หน่วง 2 วินาที แลว้ค่อยทำให้หายไป
+        yield return new WaitForSeconds(0.1f);
+        Destroy(this.gameObject);
+    }
+
+
+}
