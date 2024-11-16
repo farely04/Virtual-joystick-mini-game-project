@@ -1,0 +1,60 @@
+public class Player : MonoBehaviour
+{
+    public FixedJoystick joystick;
+    CharacterController characterController;
+    public float speed = 6.0f;
+    private Vector3 moveDirection = Vector3.zero;
+    Rigidbody ringidbody;
+    Animator animator;
+    public float fireRate = 0.4f;
+    private float nextFire = 0.0f;
+    public GameObject Gun;
+    public GameObject Bullet;
+    void Start()
+    {
+        characterController = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+    }
+
+    void FixedUpdate()
+    {
+        if (characterController.isGrounded)
+        {
+            animator.SetBool("Run", false);
+            moveDirection = new Vector3(joystick.Horizontal,
+            0.0f,
+            joystick.Vertical);
+            moveDirection *= speed;
+            if (joystick.Horizontal != 0 || joystick.Vertical != 0)
+            {
+                animator.SetBool("Run", true);
+            }
+            if (joystick.Vertical < 0)
+            {
+                this.transform.rotation = Quaternion.Euler(0, 180, 0);
+            }
+            else
+            {
+                this.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+        characterController.Move(moveDirection * Time.deltaTime);
+    }
+
+
+    public void FireButton()
+    {
+        if (Time.time > nextFire)
+        {
+            nextFire = Time.time + fireRate;
+            Fire();
+        }
+    }
+    public void Fire()
+    {
+        Instantiate(Bullet, Gun.transform.position, Gun.transform.rotation);
+    }
+
+
+
+}
